@@ -115,8 +115,45 @@ Select GETDATE(), GETUTCDATE()
 
 SELECT InvoiceId, InvoiceNumber, InvoiceDueDate
 From Invoices
+
 --WHERE MONTH(InvoiceDueDate) = 1 OR MONTH(InvoiceDueDate) = 12
 --Where DAY(InvoiceDueDate) in (30, 31)
 -- Where YEAR(InvoiceDueDate) = 2019
 Where InvoiceDueDate BETWEEN '1/1/2019' AND '12/31/2019'--Superior Way
 ORDER BY InvoiceDueDate
+
+-- Get the InvoiceId, invoiceTotal
+-- 
+
+
+--SELECT InvoiceId, InvoiceTotal, InvoiceDueDate
+--FROM Invoices 
+--WHERE VendorId = 110
+
+--SELECT TOP 10 InvoiceDueDate, InvoiceId, InvoiceTotal
+--FROM Invoices
+--WHERE VendorId = 110
+--ORDER BY InvoiceDate DESC
+
+--SELECT InvoiceDueDate, InvoiceId, InvoiceTotal, VendorID
+--From Invoices
+--WHERE InvoiceDueDate between '1/1/2020' AND '1/31/2020'
+--primary key only/uniaraly id/indentifys row in table 
+
+-- get unpaid invoices 
+--SELECT TOP 10 InvoiceId, VendorID, InvoiceTotal, InvoiceDueDate
+--FROM Invoices
+--WHERE PaymentDate is NULL
+--ORDER BY InvoiceID
+
+--SELECT VendorID, VendorName, VendorContactFName, VendorContactLName, VendorAddress1
+--FROM Vendors
+--WHERE VendorID IN (72, 83, 80, 123, 110, 106, 37)
+
+SELECT TOP 10 InvoiceId, Invoices.VendorID, InvoiceTotal, InvoiceDueDate
+	,VendorName, VendorContactFName, VendorContactLName
+	-- Aliases R OP
+FROM Invoices
+	JOIN Vendors ON Invoices.VendorID = Vendors.VendorID
+WHERE PaymentDate is NULL
+ORDER BY InvoiceID
