@@ -157,3 +157,7 @@ FROM Invoices
 	JOIN Vendors ON Invoices.VendorID = Vendors.VendorID
 WHERE PaymentDate is NULL
 ORDER BY InvoiceID
+
+SELECT v.VendorID, VendorName, InvoiceID
+FROM   Invoices i CROSS JOIN Vendors v --on v.VendorID = i.VendorID
+ORDER BY VendorID
