@@ -161,3 +161,47 @@ ORDER BY InvoiceID
 SELECT v.VendorID, VendorName, InvoiceID
 FROM   Invoices i CROSS JOIN Vendors v --on v.VendorID = i.VendorID
 ORDER BY VendorID
+
+SELECT TermsDueDays, VendorId, VendorName
+FROM Vendors v JOIN Terms t ON t.TermsID = v.DefaultTermsID
+WHERE t.TermsDueDays > 30--TermsDueDays > 30t.TermsID IN (4, 5)
+
+--USE WideWorldImporters
+--GO
+--Select ColorID
+--From Warehouse.StockItems
+
+--Select ColorName
+--FROM Warehouse.Colors
+
+--Select *
+--FROM 
+
+--SELECT CustomerID, CustomerName, c.BuyingGroupID
+--FROM Sales.Customers c JOIN Sales.BuyingGroups bg ON c.BuyingGroupID = bg.BuyingGroupID -- If I only want whats in both do inner; 
+--ORDER BY CustomerName
+
+SELECT 'Current' Type, VendorId, VendorName, VendorContactLName, VendorContactFName
+FROM Vendors
+WHERE VendorID IN (1, 44, 76, 94)
+UNION -- Gives the ability to run 2 quaries AS a SINGLE result
+SELECT 'Updates', VendorID, 'N/A', LastName, FirstName -- Make sure that the columns alling with the first Select
+FROM ContactUpdates
+Where VendorID IN (1, 44, 76, 94)
+
+--temp holiday
+SELECT '1/1/2024' DataVal, 'NewYearsDay' DateName
+UNION
+SELECT '1/15/2024', 'MLK DAY'
+UNION 
+SELECT '2/19/2024', 'Presidents Day'
+UNION 
+SELECT '7/4/2024', 'Forth of July'
+UNION -- where 'all' goes
+SELECT '1/1/2024', 'NewYearsDay' -- GETS RID of duplicates unless all is above
+
+SELECT DISTINCT VendorID
+FROM Invoices
+EXCEPT -- INTERSECT= GIves me all the rows in both; opp of union gets all except
+SELECT Vendorid FROM Vendors Where VendorState = 'TX'
+
