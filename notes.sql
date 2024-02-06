@@ -205,3 +205,19 @@ FROM Invoices
 EXCEPT -- INTERSECT= GIves me all the rows in both; opp of union gets all except
 SELECT Vendorid FROM Vendors Where VendorState = 'TX'
 
+-- Aggregates; An aggregate function will run a function of all the rows and return a single one
+SELECT COUNT(InvoiceID)
+FROM Invoices
+WHERE VendorId = 123
+
+SELECT COUNT(*) UseColmnName
+FROM Invoices
+Where YEAR(InvoiceDueDate) = 2020
+
+Select MIN(InvoiceTotal) si, MAX(InvoiceTotal) li
+FROM Invoices
+Where VendorId = 123 
+
+-- SUM() func can be used to add up all values in column
+-- AVG() func can be used for avg
+SELECT MAX(InvoiceTotal) FROM Invoices
