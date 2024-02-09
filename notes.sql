@@ -221,3 +221,51 @@ Where VendorId = 123
 -- SUM() func can be used to add up all values in column
 -- AVG() func can be used for avg
 SELECT MAX(InvoiceTotal) FROM Invoices
+
+SELECT VendorID, MIN(InvoiceTotal) SmallestInvoice, MAX(InvoiceTotal) LargestInvoice
+From Invoices
+WHERE YEAR(InvoiceDueDate) = 2020
+GROUP BY VendorID
+ORDER BY VendorID
+
+SELECT i.VendorID, v.VendorName, COUNT(*)
+FROM Invoices i JOIN Vendors v on i.VendorID = v.VendorID
+GROUP BY i.VendorId, v.VendorID -- WHen grouping only group by necessary colmns 
+ORDER BY i.VendorID
+
+SELECT VendorID, COUNT(*)
+FROM Invoices
+-- HAVING CLause used after grouping, Can have aggregates
+GROUP BY VendorID HAVING COUNT(*) >= 3
+ORDER BY VendorID
+
+-- Get the invoices in CA 
+SELECT VendorID
+FROM Vendors
+WHERE VendorState = 'CA'
+
+--Invoices
+SELECT InvoiceId, v.VendorID, VendorState
+From Invoices i JOIN Vendors v on v.VendorID = i.VendorID
+WHERE i.VendorID NOT IN (SELECT VendorID FROM Vendors WHERE VendorState = 'CA')
+
+
+SELECT InvoiceId, v.VendorID, VendorState
+From Invoices i JOIN Vendors v on v.VendorID = i.VendorID
+WHERE VendorState = 'CA'
+ORDER BY i.VendorID, InvoiceId
+
+-- Number 7
+SELECT v.VendorID
+FROM Vendors v LEFT JOIN Invoices i ON v.VendorId = i.VendorID
+WHERE InvoiceID IS NULL
+
+SELECT InvoiceId, InvoiceTotal
+FROM Invoices
+WHERE InvoiceTotal > (SELECT AVG(InvoiceTotal) FROM Invoices)
+
+--AVG invoice Total for vendor
+SELECT TOP 10 i.VendorID, InvoiceTotal, a.avg
+FROM Invoices i Join (SELECT VendorID, AVG(InvoiceTotal) avg FROM Invoices GROUP BY VendorID) a ON i.VendorID = a.VendorID
+WHERE i.InvoiceTotal > a.avg 
+ORDER BY i.VendorID, InvoiceTotal
