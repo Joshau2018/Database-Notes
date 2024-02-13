@@ -12,7 +12,7 @@ WHERE SalesTerritory = 'Southeast'
 ORDER BY StateProvinceName
 
 -- Scenerio 3
-SELECT  CustomerID, TransactionDate, TransactionAmount
+SELECT CustomerID, TransactionDate, TransactionAmount
 FROM Sales.CustomerTransactions
 WHERE TransactionAmount < 0 AND YEAR(TransactionDate) = 2015
 ORDER BY TransactionDate DESC, TransactionAmount ASC
@@ -23,7 +23,8 @@ FROM Application.Countries
 WHERE LatestRecordedPopulation > 1000000 AND Continent != 'Oceania'
 
 --Scenerio 5
-SELECT TOP 10 StockItemName, RecommendedRetailPrice, Tags
+SELECT TOP 10
+    StockItemName, RecommendedRetailPrice, Tags
 FROM Warehouse.StockItems
 WHERE IsChillerStock = 1 OR StockItemName LIKE 'USB%'
 ORDER BY StockItemName
@@ -46,4 +47,17 @@ WHERE CityName LIKE 'A%' AND sp.SalesTerritory = 'Southeast'
 ORDER BY StateProvinceName DESC, CityName
 
 -- Scenerio 9
+SELECT CustomerID Id, CustomerName 'Name', 'Consumer' 'Type'
+FROM Sales.Customers
+UNION
+SELECT SupplierID, SupplierName, 'Supplier'
+FROM Purchasing.Suppliers
+ORDER BY 'Name'
 
+-- Scenerio 10
+SELECT c.CityID, sp.StateProvinceName, coun.CountryName, sp.SalesTerritory
+FROM Application.Cities c
+JOIN Application.StateProvinces sp ON c.StateProvinceID = sp.StateProvinceID
+JOIN Application.Countries coun
+ON sp.CountryID = coun.CountryID
+WHERE sp.SalesTerritory = 'Southeast' OR sp.SalesTerritory = 'Southwest'

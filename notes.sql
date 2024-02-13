@@ -269,3 +269,5 @@ SELECT TOP 10 i.VendorID, InvoiceTotal, a.avg
 FROM Invoices i Join (SELECT VendorID, AVG(InvoiceTotal) avg FROM Invoices GROUP BY VendorID) a ON i.VendorID = a.VendorID
 WHERE i.InvoiceTotal > a.avg 
 ORDER BY i.VendorID, InvoiceTotal
+
+-- Full outer join gives all the data from each table
