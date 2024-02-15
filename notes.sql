@@ -271,3 +271,66 @@ WHERE i.InvoiceTotal > a.avg
 ORDER BY i.VendorID, InvoiceTotal
 
 -- Full outer join gives all the data from each table
+SELECT VendorID, AVG(InvoiceTotal) FROM Invoices GROUP BY VendorId
+
+
+-- GET THE VENDORS WITH no invoices
+SELECT v.VendorId FROM Vendors v LEFT JOIN Invoices i ON v.VendorID = i.VendorID
+WHERE i.InvoiceID IS NULL
+
+--W/O a join
+-- EXIST takes a subqueary and returns back if there is a row in it or not
+SELECT VendorID FROM Vendors v WHERE NOT EXISTS (SELECT * FROM Invoices WHERE VendorId = v.VendorID)
+
+SELECT i.VendorID, v.VendorState, SUM(InvoiceTotal) 
+FROM Invoices i JOIN Vendors v ON v.VendorID = v.VendorID 
+GROUP BY v.VendorID, v.VendorState
+ORDER BY v.VendorState
+
+SELECT v.VendorId, v.VendorState, MAX(IvoiceTotal)
+FROM (SELECT i.VendorID, v.VendorState, SUM(InvoiceTotal) 
+FROM Invoices i JOIN Vendors v ON v.VendorID = v.VendorID 
+GROUP BY v.VendorID, v.VendorState
+ORDER BY v.VendorState) x JOIN Vendors v ON x.VendorId = v.VendorID JOIN Invoices i ON v.VendorID = i.VendorID
+
+
+-- WITH ID AS(...); CTE - Common Table Expression
+;WITH VendorsByState AS(
+	SELECT v.VendorID, v.VendorState, SUM(InvoiceTotal) InvoiceSum
+	FROM Invoices i JOIN Vendors v ON v.VendorID = v.VendorID 
+	GROUP BY v.VendorID, v.VendorState
+)
+
+ ,TopVendorByState AS(
+	SELECT VendorState, MAX(InvoiceSum) HighInvoice
+	FROM VendorsByState
+	GROUP BY VendorState
+)
+SELECT vs.VendorID, vs.VendorState, vs.InvoiceSum
+FROM VendorsByState vs JOIN TopVendorByState v ON vs.VendorState = v.VendorState AND vs.InvoiceSum = v.HighInvoice 
+ORDER BY vs.VendorState
+
+USE Examples;
+GO
+
+SELECT EmployeeId, LastName, FirstName, ManagerID
+FROM Employees
+
+-- Recursively calls ReportsTo 
+;WITH ReportsTo As(
+	SELECT EmployeeId, ManagerId, 0 Level FROM Employees WHERE ManagerID IS NULL
+	UNION ALL
+	SELECT e.EmployeeId, e.ManagerId, r.Level + 1
+	FROM Employees e JOIN ReportsTo r On e.ManagerID = r.EmployeeID
+)
+SELECT e.EmployeeID, e.FirstName, e.LastName
+FrOM ReportsTo r JOIN Employees e ON r.EmployeeID = e.EmployeeID
+ORDER BY Level
+
+-- Numbers From 1 - 100; Can only call itself so many times
+;WITH Numbers AS(
+	SELECT 1 AS VALUE
+	UNION ALL
+	SELECT Value + 1
+	FROM Numbers Where Value < 100
+) Select Value FROM Numbers
