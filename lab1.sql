@@ -1,7 +1,7 @@
 USE WideWorldImporters;
 GO
 
---  Scenerio 1
+--  Scenerio 1 returns 13
 SELECT SupplierName, WebsiteURL, DeliveryAddressLine1, DeliveryAddressLine2, DeliveryPostalCode
 FROM Purchasing.Suppliers
 
