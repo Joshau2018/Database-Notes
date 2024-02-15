@@ -334,3 +334,41 @@ ORDER BY Level
 	SELECT Value + 1
 	FROM Numbers Where Value < 100
 ) Select Value FROM Numbers
+
+-- To insert data in; Only one table; insert [into] table (col); add a ',' after and '()' to add more rows
+INSERT Vendors 
+	(VendorName, VendorAddress1, VendorCity, VendorState, VendorZipCode, DefaultTermsId, DefaultAccountNo)
+	VALUES ('Northeast Mall', 'Melbourne Rd', 'Fort Worth', 'Tx', '76179', 1, 301) 
+	 , ('Best Buy', NULL, 'Hurst', 'Tx', '76054', 2, 301)
+	 , ('Barbes & NOvle', DEFAULT, 'Hurst', 'Tx', '76054', 3, 301) -- Default adds the default value in place
+
+Select TOP 10 * FROM Vendors ORDER BY 1 DESC
+
+-- Get vendors and how many invoices
+SELECT VendorId, COUNT(*) FROM Invoices GROUP BY VendorID
+ORDER BY COUNT(*) DESC
+
+-- To Archive
+INSERT INTO InvoiceArchive (InvoiceId, VendorId, InvoiceNumber, Invoicedate, InvoiceTotal, PaymentTotal, CreditTotal, TermsId, InvoiceDueDate, PaymentDate)
+Select InvoiceId, VendorId, InvoiceNumber, Invoicedate, InvoiceTotal, PaymentTotal, CreditTotal, TermsId, InvoiceDueDate, PaymentDate From Invoices WHERE VendorId = 110
+
+SELECT * FROM InvoiceArchive
+
+-- Update command can be used to update; Update Table Set col = val {col = value}; BE CAREFUL!
+UPDATE Vendors
+SET VendorAddress1 = '828 W Harwood Dr'
+SELECT * FROM Vendors
+WHERE VendorName = 'TCCD (Northeast)'
+
+-- Fresno CA to Fresco Tx
+UPDATE Vendors
+SET VendorState = 'TX'
+SELECT * FROM Vendors WHERE VendorState = 'CA' AND VendorCity = 'Fresno'
+
+SELECT * FROM Vendors WHERE VendorId Between 120 AND 123
+
+UPDATE Vendors
+SET DefaultTerms = 4
+FROM Vendors v
+	JOIN (SELECT VendorId FROM vendors WHERE VendorId BETWEEN 120 AND 123) x
+		ON v.VendorId = x.VendorId
