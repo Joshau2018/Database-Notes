@@ -235,7 +235,7 @@ ORDER BY i.VendorID
 
 SELECT VendorID, COUNT(*)
 FROM Invoices
--- HAVING CLause used after grouping, Can have aggregates
+-- HAVING CLause used after grouping, Can have aggregates amd usually does.
 GROUP BY VendorID HAVING COUNT(*) >= 3
 ORDER BY VendorID
 
@@ -372,3 +372,31 @@ SET DefaultTerms = 4
 FROM Vendors v
 	JOIN (SELECT VendorId FROM vendors WHERE VendorId BETWEEN 120 AND 123) x
 		ON v.VendorId = x.VendorId
+-- Delete - removes rows from a table; ALWAYS include a WHERE clause; Great strat use multi conditional statements
+SELECT *FROM GLAccounts WHERE AccountDescription LIKE '%401k%'
+DELETE FROM GLAccounts
+WHERE AccountDescription LIKE '%401k%'
+
+SELECT * FROM GLAccounts a JOIN Vendors v ON a.AccountNO = V.DefaultAccountNo
+DELETE  a From GLAccounts a LEFT JOIN Vendors v ON a.AccountNo = v.DefaultAccountNo WHERE v.VendorId is NULL
+
+--IF NOT EXISTS(SELECT * FROM Vendors WHERE VendorName LIKE 'TCCD (northeast)')
+--	INSERT Into Vendors (VendorName) = 'None' 
+--ELSE	
+--	WHERE VendorId = 
+
+-- MERGE
+MERGE INTO InvoiceArchive AS target
+USING Invoices AS source ON source.InvoiceId = target.InvoiceId -- Can use subqueary or cte
+WHEN MATCHED THEN UPDATE SET PaymentDATE = source.PaymentDate, PaymentTotal = source.PaymentTotal
+--Could have a WHEN MATCHED AND cond Then, WHEN is optional when used it must have 1 match
+WHEN NOT MATCHED THEN INSERT (InvoiceID, VendorId, InvoiceNumber, InvoiceDate, InvoiceTotal, PaymentTotal, CreditTotal,
+								TermsId, InvoiceDueDate, PaymentDate)
+							 Values (source.InvoiceID, source.VendorId, source.InvoiceNumber, source.InvoiceDate
+							  , source.InvoiceTotal, source.PaymentTotal, source.CreditTotal
+							  , source.TermsId, source.InvoiceDueDate, source.PaymentDate);
+--WHEN NOT matched BY/AND Cond THEN
+-- Source table is not impacted by any of this
+-- WHEN NOT Matched BY SOURCE THEN DELETE
+SELECT COUNT(*) FROM Invoices
+SELECT * FROM InvoiceArchive
