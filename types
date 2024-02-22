@@ -1,0 +1,38 @@
+-- Types | Size | Comments
+------------------------------------
+
+-- Integergrals
+-- TINYINT | 1 | 2^8 | 0-255
+-- SMALLINT | 2 | 2^16 | +-32k
+-- INT | 4 | 2^32 | +=4billion (PK)
+-- BIGINT | 8 | 2^64 | 
+
+-- FLOATS (inexect)
+-- REAL | 4 | +-E38 | 5 to 7 precision (FLOAT(24))
+-- FLOAT(N) | 4 OR 8 | N = 1 and 53, precision (e.g. FLOAT(1), FLOAT(35), FLOAT(53))
+
+-- NUMBERS (exect)
+--  DECIMAL(P, S) | ? | Precision: 1-38 (def: 18), Scale: 0-P (def: 0) (e.g DECIMAL(10, 2)), can exeed precision, If I store more vlues it can store more values
+--  NUMERIC(P, S) | ? | same
+--  DECIMAL(1, 2) != NUMERIC (2, 2) != DECIMAL(2, 2)
+-- SMALLMONEY | 4 |
+-- MONEY | 8 | BIGINT /w Precison 10/100ths
+
+-- TEXT
+-- CHAR(N) | * | N = 1-8000, ANSI (e.g CHAR(1) = 1 char, CHAR(100) = 100 char)
+-- NCHAR(N) | * | N = 1-8000, Unicode
+-- VARCHAR(N) | * | N = 1-8000 OR MAX, ANSI, Any mount of CHAR to N, (e.g CHAR(MAX) = max chars)
+-- NVARCHAR(N) | * | N = 1-8000 OR MAX, Unicode
+
+-- OTHER
+-- BIT | 1 | 0 or 1 ( NOT A BOLEAN OR CONVERTBLE!!!)
+-- DATETIME | 8 | 1/1/1753 to 12/31/9999, prec 1 ms
+-- DATETIME | * | same, prec 100 ns
+-- DATE
+-- TIME
+-- BINARY(N)
+-- VARBINARY(N)
+
+-- Type Alias
+-- DescriptionDefinitiion VARCHAR(250)
+-- NameDefinition VAECHAR(150)
