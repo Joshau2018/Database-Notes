@@ -400,3 +400,40 @@ WHEN NOT MATCHED THEN INSERT (InvoiceID, VendorId, InvoiceNumber, InvoiceDate, I
 -- WHEN NOT Matched BY SOURCE THEN DELETE
 SELECT COUNT(*) FROM Invoices
 SELECT * FROM InvoiceArchive
+
+-- ISDATE is an expression that returns 1 if it is a date and 0 if the data is not a date; Careful on the date format which is found in the local
+SELECT ISDATE('1/1/2024') 
+
+-- ISNUMERIC checks to see if it is a numeric value. '232' works but '2/2/2023' does not, does scientific tho
+SELECT ISNUMERIC(0)
+
+-- How to convert string to integer
+-- Using the cast function allows a string that is able to be converted into an int to be converted
+SELECT CAST('1234' AS INT)
+
+SELECT CAST('2/34/2023' AS INT)
+
+--Converting can convert strings to dates (type, expression) HAS TO BE ABLE TO CONVERT INTO
+-- CONVERT has an optional 3rd paramater called style; STYLE 101 is the us date format; Each data type has their own style
+SELECT CONVERT(datetime, '1/1/2024')
+SELECT CONVERT(VARCHAR(50), GETDATE(), 101) --   --/--/----
+SELECT CONVERT(VARCHAR(50), GETDATE(), 114) -- HH:MM:SS
+
+-- TRY convert trys if it can it will other wise it returns null; sometimes gives the same errors of cast/convert
+SELECT TRY_CONVERT(int, '12')
+
+-- TRY cast WORKS the same as try convert but format is different
+SELECT TRY_CAST('122' AS INT)
+
+-- PArse - takes a string and trys to parse into whatever type I want
+PARSE('12234' AS MONEY)
+-- ACTS the same as try convert and cast
+TRY_PARSE('12234' AS MONEY)
+
+--Format(expr, string)
+SELECT FORMAT(12234, 'c') -- c converrts to currency
+
+-- The amount of zeros are the min value if there is not it will insert a zero in front
+SELECT FORMAT(123, '0000')
+SELECT FORMAT(123009.43535, '##.##')
+SELECT FORMAT(GETDATE(), 'MMM DD, YYYY HH:mm:ss')
