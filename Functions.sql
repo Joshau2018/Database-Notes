@@ -61,3 +61,69 @@ SELECT RAND(10) RandomValue
 SELECT CEILING(Rand()*10) Random1To100
 	 , FLOOR(Rand()*11) RandomTo10
 	 , FLOOR(RAND() * (20-5)) + 5 Random5To20
+
+--  M to N : FLOOR(RAND() * (n-m+1))+m
+SELECT FLOOR(RAND() * (20-5+1))+5 Eandom5To20
+
+-- DateTime
+-- GETDATE() | Returns current datatime, in local time
+-- GETUTCDATE() | Returns current datatime, in UTC
+SELECT GETDATE() CurrentDate
+	 , GETUTCDATE () CurrentUtcDate
+
+--  YEAR(GETDATE()) | returns integral year
+-- MONTH(GETDATE()) | returns integral month (1-12)
+SELECT YEAR(GETDATE()) YearPart
+	 , MONTH(GETDATE()) MonthPart
+	 , DAY(GETDATE()) DayPart
+	 , DATEPART(HOUR, GETDATE()) HoursPart
+	 , DATEPART(WEEKDAY, GETDATE()) DofWeekPart
+	 , DATEPART(WEEK, GETDATE()) WeekPart
+
+	SELECT TOP 10InvoiceId, InvoiceDueDate, DATEPART(WEEKDAY, InvoiceDueDate), DATENAME(WEEKDAY, InvoiceDueDate) WeekDayName
+	FROM Invoices
+	WHERE DATEPART(WEEKDAY, InvoiceDueDate) Between 2 AND 6
+	ORDER BY InvoiceDueDate DESC
+
+-- CAnuse possitive or negative positive future and negative past
+-- DATEADD(part, interval, Date) | Returns new datetime
+-- EOMONTH (DATE()) |
+SELECT DATEADD(Day, 1, GETDATE()) Tomorrow
+	, DATEADD(Day, -1, GETDATE()) Yesterday
+	, CAST(CAST(MONTH(GETDATE()) AS VARCHAR(2)) + '/01/' + CAST (YEAR(GETDATE()) AS VARCHAR(4)) AS DATETIME) FirstMonth
+	, DATEADD(DAY, -(DAY(GETDATE()) - 1), GETDATE()) FirstOfTheMonth
+	, EOMONTH(GETDATE()) EndOfMonth
+
+-- DATEDIFF(part, date1, date2) | REturns the difference in parts between the two
+SELECT DATEDIFF(DAY, '1/1/2024', GETDATE()) + 1 DayOfYear
+     , DATEPART(DAYOFYEAR, GETDATE()) DayOfYear2
+	 , DATEADD(day, 1, EOMONTH(DATEADD(month, -1, GETDATE()))) FirstOfMonth
+
+-- DATENAME(part, date) | Returns string equvalent of Date part
+-- DATE
+SELECT DATENAME(WEEKDAY, GETDATE()) WeekDayName
+	 , DATETIMEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1, 0, 0, 0, 0) FirstOfMonth
+	 , DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) FirstDayOfMonth2
+
+-- Other
+-- ISNULL(expr, value) | Returns expr if not Null or value otherwise
+-- coalesce(expr, expr*) | returns first non null
+-- IIF(Bool, true, false) | returns the true value if true and false value if false
+-- 
+SELECT VendorName, ISNULL(VendorContactLName, '(none)') ContactName
+	 , COALESCE(VendorContactLName, VendorContactFName, '(none)') ContactPersonName
+	 , IIF(DefaultTermsID != 1, 'Not 1', 'Is 1') DefaultTerms
+	 , CHOOSE(DefaultTermsID, 'First', 'Second', 'Third', 'Fourth') TermsName
+FROM Vendors
+ORDER BY VendorId DESC
+
+-- Vendor IDs: 1, 2, 3, 4, 5, 6
+-- STRING_SPLIT(string, seperator) | Returns a TABLE
+-- STRING_AGG(expr, seperator) | returns aggregate string seperated by seperator
+SELECT value
+SELECT VendorId, vendorName
+FROM Vendors v JOIN STRING_SPLIT('1,2,3,4,5,6', ',') x ON v.VendorId = x.value
+
+SELECT STRING_AGG(VendorId, ',')
+FROM Vendors WHERE VendorID BETWEEN 1 AND 6
+-- What does OLEDB mean
