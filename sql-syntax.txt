@@ -1,0 +1,8 @@
+## start out with a er diagram that indicates how the Entity Ralates to other things
+## start by starting with the entities that we care about to a t
+## do not USE: name, order, or rank as a colomn name
+## A calculated/computed(C/C) colmn is made to make it where it calculates he value on its own if the expression is the same for every row
+## C/C colomn can cause longer time and impact informance
+## not persistent mean that i take the hit on the select, persistent means that i take no hit querying
+## C/C is limitted to a SINGLE ROW
+## Identity is the numerical value that is incremented per row
