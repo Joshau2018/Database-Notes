@@ -31,7 +31,7 @@ WHERE CustomerName LIKE 'Tailspin Toys%'
 ORDER BY location
 
 -- Scenerio 6
-SELECT PersonID, FullName, PreferredName AS [first name], trim(REPLACE(FullName, PreferredName, '')) AS [last name],
+SELECT PersonID, FullName, PreferredName AS [first name], trim(SUBSTRING(FullName, LEN(PreferredName), 100)) AS [last name],
       CASE
       WHEN IsPermittedToLogon = 1 THEN LogonName
       ELSE NULL
