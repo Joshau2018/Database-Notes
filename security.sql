@@ -1,0 +1,4 @@
+SELect USER_ID(), SUSER_ID(), DATABASE_PRINCIPAL_ID()
+
+-- returns the strng verion
+SELECT USER_NAME(), SUSER_NAME(), SUSER_SNAME()
