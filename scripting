@@ -1,0 +1,48 @@
+-- use switches databases| ; ends statement and is optional| GO runs batch
+USE [new database];
+-- Block 1
+GO
+
+-- Block 2
+GO
+-- Scoping nat as simple as in programming languages; SCopes: moduke, precedure/funct, trigger or block
+-- GO seperates GO
+
+-- Can be used as a diagnostic tool
+-- Kind of like python where it autos new line
+PRINT 'Hello'
+PRINT 10
+
+-- Doesn't work because messeges can only be seen by the person who ran the querry 
+-- print -> Messages
+-- Querry -> Results
+print 'before'
+select Movies from [new database]
+print 'after'
+
+-- Must activate before the querry; Disables messages from querry abut rows affected
+-- No impact on querry ONLY on messages
+-- SET affects all blocks
+SET NOCOUNT ON;
+
+
+
+-- gets top ten of english id
+SELECT TOP 10 * FROM sys.messages WHERE language_id = 1033 Order BY message_id desc
+-- PRINT FORMATMESSAGE(messege_id) if its a num
+-- any string can get put in; format strings just simular to java
+-- % [flags][width]type
+-- type: d, i = integer
+--          s = String
+--          x = hex value
+-- flags:
+--        + include sign
+--        -left justify
+--         0 pad with 0s up to width
+-- id must be 13000
+-- sometimes cannot be used where a sring is allowed
+-- limit is 2047
+-- FORMATMESSAGE((string | id), args*)
+PRINT FORMATMESSAGE(49973)
+
+
