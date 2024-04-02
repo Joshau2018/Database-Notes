@@ -112,7 +112,7 @@ SELECT DATENAME(WEEKDAY, GETDATE()) WeekDayName
 -- 
 SELECT VendorName, ISNULL(VendorContactLName, '(none)') ContactName
 	 , COALESCE(VendorContactLName, VendorContactFName, '(none)') ContactPersonName
-	 , IIF(DefaultTermsID != 1, 'Not 1', 'Is 1') DefaultTerms
+	 , IIF(DefaultTermsID != 1, 'Not 1', 'Is 1') DefaultTerms -- single '='
 	 , CHOOSE(DefaultTermsID, 'First', 'Second', 'Third', 'Fourth') TermsName
 FROM Vendors
 ORDER BY VendorId DESC
