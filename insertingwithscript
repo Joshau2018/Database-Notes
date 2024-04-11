@@ -1,0 +1,49 @@
+-- Paramaters
+
+Declare @title Varchar(100) -- req
+declare @realeasetDate (Date)
+declare @rating Varchar(10)
+Declare @runlength int = 0
+declare @summary varchar(255) = NULL
+declare @inermissionlen int = NULL
+declare @isblackandwhite bit = 0
+declare @genre varchar(50) = NULL
+
+-- set some vals
+set @title = 'what about bob?'
+set @releasedate '1/1/1998'
+set rating = 'pg'
+set @runlength = 98
+
+
+-- validation
+-- title must be unique
+-- rating must be valid
+
+
+
+insert Movies (title, runlength, summary, isblackandwhite, MPAARating,
+				releasedate, intermissionlen)
+		Values (@title, @runlength, @sumry, @isblackandwhite, @rating, @realeasetDate, @isblackandwhite)
+-- ONLY FOR INSERTS
+-- always random
+-- identity func
+-- scope_identity() returns the id of the last row inserted in the able; always use
+-- for only the current block; only works when you have identity columns
+-- always insert and imedently get identity if i need it
+-- ident_current ('table') the id in the highest row inserted in the table; non-reliable for getting the table we just inserted
+-- @@identity returns the id of the last row inserted into the table; its global so it effects other blocks asweell
+set @movieId = SCOPE_IDENTITY()
+-- get or create genre
+IF @genre IS NOt NULL
+Begin
+	declare @genreId int
+	SELECT @genreid = genreid FROM Genres where genrename = @genere
+	IF @genreId is null
+	Begin
+		insert into genres (genrenames) values (@genere)
+		set @genreId = SCOPE_IDENTITY()
+	END
+-- associate movie ith genre
+	insert INTO MovieGenres (MovieId, genreId) values (@movieId, @genreId)
+end
