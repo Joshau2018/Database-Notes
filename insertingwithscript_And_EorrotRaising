@@ -1,7 +1,7 @@
 -- Paramaters
-
+-- if throw messege num is lower than 50000 it pulls messege from messege table
 Declare @title Varchar(100) -- req
-declare @realeasetDate (Date)
+declare @realeaseDate (Date)
 declare @rating Varchar(10)
 Declare @runlength int = 0
 declare @summary varchar(255) = NULL
@@ -14,17 +14,35 @@ set @title = 'what about bob?'
 set @releasedate '1/1/1998'
 set rating = 'pg'
 set @runlength = 98
+set @genre = 'Comedy'
 
 
 -- validation
 -- title must be unique
 -- rating must be valid
+-- if title is null
+IF LEN(ISNULL(@title, '')) = 0
+Begin
+	-- reports an error
+	-- raiserror('messge here', severity (0-25, <18), state(0-255), args(optional)) 
+	-- 16 - brings it to messeges still runs querry
+	-- raiserror doesnt stop code from executing unless 20+ which requires admin
+	-- raiserror('title is required', 16, 0)
+	-- typically return is usually always followed after raiserror
+	-- throw errorN(>= 50000), messege, state | ; is req before
+	-- throw terminates block making it peffered than raiserror
+	;throw 50000, 'title is required', 0
+end
+SElect * from movies
 
-
+IF NOt exists (select * from ratings, where description = @rating)
+begin
+	;throw 50001, 'ratinf is invalid', 0
+end
 
 insert Movies (title, runlength, summary, isblackandwhite, MPAARating,
 				releasedate, intermissionlen)
-		Values (@title, @runlength, @sumry, @isblackandwhite, @rating, @realeasetDate, @isblackandwhite)
+		Values (@title, @runlength, @sumry, @isblackandwhite, @rating, @realeaseDate, @isblackandwhite)
 -- ONLY FOR INSERTS
 -- always random
 -- identity func
