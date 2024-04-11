@@ -65,3 +65,28 @@ Begin
 -- associate movie ith genre
 	insert INTO MovieGenres (MovieId, genreId) values (@movieId, @genreId)
 end
+
+-- error handling
+-- Begin Try starts a try block
+-- end try ends try block
+--Begin catch starts a catch block
+-- end catch ends a catch block
+Begin Try
+	-- Whatever
+	-- raiserror('works', 16, 0) -- severity 16+ terminates block howevr lower does not
+	--	;throw 50001, 'also works', 0
+	Insert into Movies (title) -- not useful but possible to use constraints to check
+	select top 1 Title from movies
+End try begin catch
+	Print 'handlin error'
+	-- get error details
+	Declare @mesg Nvarchar(4000)
+	declare @severity int, @state int, @errorN int
+
+	SEt @mesg = ERROR_MESSAGE()
+	set @severity = ERROR_SEVERITY()
+	set @state = ERROR_STATE()
+	set @errorN = ERROR_NUMBER()
+	Print @mesg + '(Severity: ' + @severity
+	;Throw -- rethrows original error can also be combined wit raiserror
+end catch
