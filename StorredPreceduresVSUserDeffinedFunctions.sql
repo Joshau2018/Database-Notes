@@ -1,0 +1,18 @@
+-- SP VS UDF
+-- SP returns result sets/int
+-- UDF returns any + table
+-- SP compiled when created so no run time overhead over runninfg the code manually
+-- UDF compiled at the ppoint that it is used | More of its not optamise | complex/wierd algrithim | assume it runs slower
+-- SP Modifies data
+-- UDF cannot modify data
+-- SP supports both input and output paramaters
+-- UDF only supports input parameters
+-- SP 'Callability' can call anything
+-- UDFcan only call functions
+-- SP cannot be used in Select
+-- UDF can be used in select
+-- SP cannot be used in expression
+-- UDF can use expr
+-- SP can error handle
+-- UDF cannot use error handle
+-- Not sure use SP
