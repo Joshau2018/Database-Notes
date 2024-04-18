@@ -1,6 +1,12 @@
 -- most stored precedures start with sp_ which sp = stored precedures
 -- must start with EXEC[UTE] name 
 -- gets info of an object
+-- incapsulates some of the info
+-- security
+-- simplicity
+-- difficult to call othere sp
+-- return any select in the sp as another result set
+-- sp run by themselves meaning we can not embed in a query or insert/delete--
 EXEC sp_help 'name here'
 
 -- returns a row for each line of view
