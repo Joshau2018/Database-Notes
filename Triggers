@@ -1,0 +1,92 @@
+-- Do not want to use Triggers
+-- protentially can break the database
+-- only used in 2 specific scenerios
+-- a trigger gets triggered when data is updated or removed
+-- a lot of triggers = performance issues
+-- hard to find a trigger
+-- can do higher level of auditing
+-- Could possibly enter a recursive loop that never ends
+-- Overall usefull but in specific scenerios
+
+-- To create:
+	-- CREATE TRIGGER ID ON Table_ID (INSTEAD OF | AFTER) (INSERT | UPDATE | DELETE)
+-- Order of flow:
+	-- Runs block > Creates sudo table (INSERT | UPDATE | DELETE) > Trigger > (INSERT | UPDATE | DELETE)
+
+-- AFTER TRIGGER
+-- must be attached to a table
+-- Not Typically but could use them for validation of block
+-- more common | Modifying the data while being inserted into the table
+ALTER TRIGGER tr_Movies_Audit ON Movies AFTER UPDATE
+AS BEGIN
+	SET NOCOUNT ON;
+	
+	IF TRIGGER_NESTLEVEL() > 1 RETURN; -- stops it from recursively calling other triggers
+
+	UPDATE Movies
+	SET
+		LastModifiedDate = GETDATE(),
+		LastModifiedUser = SUSER_SNAME()
+	FROM inserted i LEFT JOIN Movies m ON i.MovieId = m.MovieId
+END
+
+SELECT * FROM Movies WHERE MovieId = 1
+UPDATE Movies SET ReleaseDate = '04/01/2012' WHERE MovieId = 1
+SELECT * FROM Movies WHERE MovieId = 1
+
+-- INSTEAD OF TRIGER
+-- must be attached to a table
+-- Least likely
+-- allows to intercept inserts, delete, or updates in a table
+-- tr or trg to signify trigger
+-- The trigger can access the sudo table that is created
+-- ALTER allows for us to update/change the trigger
+ALTER TRIGGER tr_Ratings_MPAAARatings ON Ratings INSTEAD OF INSERT
+AS BEGIN
+	
+	-- ALWAYS SET NOCOUNT ON
+	SET NOCOUNT ON;
+
+	-- DO WHATEVER
+	INSERT INTO MPAARatings (Description, SortOrder)
+	SELECT Description, SortOrder From inserted
+END
+
+SELECT * FROM ratings
+INSERT INTO ratings (Description, SortOrder) Values ('Test', 1)
+SELECT * FROM MPAARatings
+
+-- Higher level audit
+ALTER TRIGGER tr_Movies_AuditLog ON Movies AFTER UPDATE
+AS BEGIN
+	DECLARE @oldTitle Varchar(100)
+	DECLARE @newTitle Varchar(100)
+
+	-- UPDATE(Col-ID) | Only works in Trigs | Works when set doesnt mean it has to change
+	-- IF UPDATE(TITLE)
+	-- COLUMNS_UPDATED() returns bitmask of changed columns, a var binarry
+	-- For every col in table reurns a 0 bit if not set and 1 bit if set
+	-- Order is right to bits, left to right bytes
+	-- Byte 1, eight bit (left to right) = 1, MovieID
+	-- Byte 1, seventh bit (left to right) = 2, Title
+	-- Byte 1, sixth bit (left to right) = 4, RunLength
+	-- Byte 1, fifth bit (left to right) = 8, Summary
+	-- Byte 1, fourth bit (left to right) = 16, isBlackAndWhite
+	-- Byte 1, third bit (left to right) = 32, MPAARating
+	-- Byte 1, second bit (left to right) = 64, ReleaseDate
+	-- Byte 1, first bit (left to right) = 128, IntermissionLength
+	IF (COLUMNS_UPDATED() & 2) > 0
+	BEGIN
+		-- Gets val for old and new (Only works with 1 row)
+		SELECT @oldTitle = Title FROM deleted
+		SELECT @newTitle = Title FROM inserted
+
+		PRINT 'Old Title = ' + ISNULL(@oldTitle, '') + ' New Value = '  + ISNULL(@newTitle, '')
+	END
+	-- If title and Release is set then 2 + 64 = 66 basically just add up the  bits
+	IF (COLUMNS_UPDATED() & 66) > 0
+		PRINT 'Title and ReleaseDate were set'
+END
+
+UPDATE Movies SET Title = 'Jaws (Orig)', ReleaseDate = '01/01/2023' WHERE MovieId = 1
+SELECT * FROM Movies WHERE MovieId = 1
