@@ -96,3 +96,73 @@ commit
 	UPDATE Movies
 	SET Title = Title
 commit
+
+-- Concurrency issues
+-- transactions allow multiple statements run atomic, at cost of locking
+-- locking prevents isolation issues
+-- Lost updates (LU) -- Updates are lost in concurrent calls
+SET Transaction Isolation Level Read uncommitted
+BEGIN TRAN
+	SELECT * FROM Movies WHere movieid = 1
+	UPDATE MOvies SET Title = Title + ' new ' WHERE movieid = 1
+	WAITFOR delay '00:00:10'
+	SELECT * FROM Movies WHere movieid = 1 
+ROLLBACK
+-- at same time as
+SET Transaction Isolation Level Read uncommitted
+BEGIN TRAN
+	UPDATE MOvies SET RunLength += 100 WHERE movieid = 1
+	WAITFOR delay '00:00:10'
+	SELECT * FROM Movies WHere movieid = 1 
+ROLLBACK
+
+-- DIRTY READS (DR) - reading data that was never committed, difficult to diagnose
+SET Transaction Isolation Level Read uncommitted
+BEGIN TRAN
+	SELECT * FROM Movies WHere movieid = 1
+	UPDATE MOvies SET Title = Title + ' new ' WHERE movieid = 1
+	WAITFOR delay '00:00:10'
+	SELECT * FROM Movies WHere movieid = 1 
+ROLLBACK
+-- Same time as
+SELECT * FROM Movies WHere movieid = 1 
+
+-- Non-repeatable reads (NR)
+-- occur when you run the same exact querry but the data are different
+-- When in the same block and results vary even though its the same command
+SET Transaction Isolation Level Read uncommitted
+BEGIN TRAN
+	SELECT * FROM Movies WHere movieid = 1
+	UPDATE MOvies SET Title = Title + ' new ' WHERE movieid = 1
+	WAITFOR delay '00:00:10'
+	UPDATE MOvies SET ReleaseDate = DATEADD(year, 1, ReleaseDate) WHERE movieid = 1
+	WAITFOR delay '00:00:10'
+	SELECT * FROM Movies WHere movieid = 1 
+ROLLBACK
+-- same time as
+SELECT * FROM Movies WHere movieid = 1 
+WAITFOR delay '00:00:10'
+SELECT * FROM Movies WHere movieid = 1 
+
+-- Phantom reads (PR) - running same query multiple times and returns different rows
+
+
+-- Isolatuin lvls 
+-- Y = prevents, N = allows
+-- Level            | LU | DR | NR | PR |
+-- READ COMMITED    | N  | Y  | N  | N  | (Default)
+-- READ UNCOMMITD   | N  | N  | N  | N  | (no locking) almost always a mistake
+-- REPEATABLE READ  | Y* | Y  | Y  | N  | *(deadlocks)
+-- SERIALIZABLE     | Y  | Y  | Y  | Y  | (Slower than slow)
+-- SNAPSHOT         | Y  | Y  | Y  | Y  | (better than SERIALIZABLE, but does it at the cost of resourses, row-versioning on table) only on tables that need it
+-- SET Transaction Isolation Level (lvl)
+SET Transaction Isolation Level READCOMMITTED
+
+-- Guide Lines
+-- Keep transactions sort
+-- reframe from using selects in transactions
+-- Use the least restrictive level so READ COMMITED 
+-- always lock our tables in the same order 
+
+-- Customize at the query(selects) level; WITH(OPTIONS) tells the engine how we intend to use the results; genuinly lowest lvl
+SELECT * FROM Movies WITH (NOLOCK) -- Genuinly used when we do not care about concurency just wanna see the data; means READUNCOMMITTED
